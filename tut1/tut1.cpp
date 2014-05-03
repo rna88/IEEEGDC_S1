@@ -29,7 +29,7 @@ core::vector2d<f32> position;
 core::vector2d<f32> target;
 core::vector2d<f32> direction;
 
-f32 speed = 0.2f;
+f32 speed = .2f * 1000.0f;
 s32 screenWidth = 640/*driver->getScreenSize().Width*/;
 s32 screenHeight = 480/*driver->getScreenSize().Height*/;
 
@@ -49,6 +49,30 @@ public:
 				direction.normalize();
 			}
 		}
+
+		if (event.EventType == EET_KEY_INPUT_EVENT)
+		{
+			if (event.KeyInput.Key == KEY_KEY_W)
+			{
+				direction.set(0, 0);
+			}
+			else if (event.KeyInput.Key == KEY_KEY_D)
+			{
+				direction.set(0, 0);
+			}
+
+			if (event.KeyInput.Key == KEY_KEY_O)
+			{
+				direction.set(0, 0);
+			}
+			else if (event.KeyInput.Key == KEY_KEY_K)
+			{
+				direction.set(0, 0);
+			}
+		}
+
+
+
 		return false;
 	}
 };
@@ -77,7 +101,7 @@ void updateBallPosition(f32 deltaTime)
 int main()
 {
 
-	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480), 32, false, 0, 0, 0);
+	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480), 32, false, 0, 1, 0);
 	if (!device)
 		return 1;
 
@@ -91,6 +115,9 @@ int main()
 	guienv = device->getGUIEnvironment();
 
 	device->setWindowCaption(L"Pong");
+
+	MyEventReceiver pongEventReceiver;
+	device->setEventReceiver(&pongEventReceiver);
 
 	//guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!", core::rect<s32>(10, 10, 260, 22), true);
 	//smgr->addCameraSceneNode(0, core::vector3df(0, 30, -40), core::vector3df(0, 5, 0));
