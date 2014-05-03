@@ -1,4 +1,4 @@
-﻿Build started 2014-04-26 2:57:49 PM.
+﻿Build started 2014-05-03 2:08:21 AM.
      1>Project "C:\Users\Ramin\Documents\Irrlicht\Projects\irrlicht_engine_tut\tut1\tut1\tut1.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\Ramin\Documents\Irrlicht\irrlicht-1.8.1\include" /I"C:\Users\Ramin\Documents\Irrlicht\irrKlang-1.4.0\include" /I"C:\Users\Ramin\Documents\Irrlicht\irrlicht-1.8.1\bin\Win32-VisualStudio" /I"C:\Users\Ramin\Documents\Irrlicht\irrKlang-1.4.0\bin\win32-visualStudio" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt tut1.cpp
@@ -13,4 +13,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.21
+Time Elapsed 00:00:03.15
