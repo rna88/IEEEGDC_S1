@@ -68,27 +68,6 @@ public:
 
 		if (event.EventType == irr::EET_KEY_INPUT_EVENT)
 			KeyIsDown[event.KeyInput.Key] = event.KeyInput.PressedDown;
-		/*if (event.EventType == EET_KEY_INPUT_EVENT)
-		{
-			if (event.KeyInput.Key == KEY_KEY_W)
-			{
-				paddle1Position.Y += (paddle1Speed * deltaTime);
-			}
-			else if (event.KeyInput.Key == KEY_KEY_D)
-			{
-				paddle1Position.Y -= (paddle1Speed * deltaTime);
-			}
-
-			if (event.KeyInput.Key == KEY_KEY_O)
-			{
-				paddle2Position.Y += (paddle2Speed * deltaTime);
-			}
-			else if (event.KeyInput.Key == KEY_KEY_K)
-			{
-				paddle2Position.Y += (paddle2Speed * deltaTime);
-			}
-		}*/
-
 		return false;
 	}
 
@@ -120,36 +99,20 @@ void updateBallballPosition(f32 deltaTime)
 		soundEngine->play2D("../../../../irrlicht-1.8.1/media/impact.wav");
 	}
 
-	/*if (ballPosition.Y > paddl1Position.Y  - ball->getSize().Height || ballPosition.Y < 0)
-	{
-		direction.Y *= -1;
-		soundEngine->play2D("../../../../irrlicht-1.8.1/media/impact.wav");
-	}
-
-	if (ballPosition.Y > screenHeight - ball->getSize().Height || ballPosition.Y < 0)
-	{
-		direction.Y *= -1;
-		soundEngine->play2D("../../../../irrlicht-1.8.1/media/impact.wav");
-	}*/
-
 }
-
-
-
 
 
 
 int main()
 {
 
-	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480), 32, false, 0, 1, 0);
+	device = createDevice(video::EDT_OPENGL, core::dimension2d<u32>(640, 480), 32, 0, 0, 1, 0);
 	if (!device)
 		return 1;
 
 	soundEngine = irrklang::createIrrKlangDevice();
 	if (!soundEngine)
 		return 1;
-	//soundEngine->play2D("../../../../irrlicht-1.8.1/media/irrlichtTheme.ogg");
 
 	driver = device->getVideoDriver();
 	smgr = device->getSceneManager();
@@ -160,12 +123,7 @@ int main()
 	MyEventReceiver pongEventReceiver;
 	device->setEventReceiver(&pongEventReceiver);
 
-	//guienv->addStaticText(L"Hello World! This is the Irrlicht Software renderer!", core::rect<s32>(10, 10, 260, 22), true);
-	//smgr->addCameraSceneNode(0, core::vector3df(0, 30, -40), core::vector3df(0, 5, 0));
-
 	gui::IGUIFont *font = guienv->getFont("../../../../irrlicht-1.8.1/media/bigfont.png");
-
-
 
 	ball = driver->getTexture("../../../../irrlicht-1.8.1/media/pong_squareBall.png");
 	ballPosition.set(220, 220);
@@ -176,8 +134,6 @@ int main()
 
 	paddle2 = driver->getTexture("../../../../irrlicht-1.8.1/media/pong_squarePaddle.png");
 	paddle2Position.set(610, 240);
-
-
 
 	s32 fps = 0;
 	s32 now = 0;
@@ -210,7 +166,10 @@ int main()
 		{
 			paddle2Position.Y -= (paddle2Speed * deltaTime);
 		}
-
+		if (pongEventReceiver.IsKeyDown(KEY_ESCAPE))
+		{
+			device->closeDevice();
+		}
 		
 		driver->beginScene(true, true, video::SColor(255, 100, 101, 140));
 
@@ -236,21 +195,11 @@ int main()
 			true);
 
 
-		font->draw(core::stringc(fps), core::rect<s32>(10, 10, 0, 0), video::SColor(255, 255, 255, 255)); // fonts must be drawn after the scene, because they end up on top.
+		font->draw((core::stringc(fps) + " FPS"), core::rect<s32>(10, 10, 0, 0), video::SColor(255, 255, 255, 255)); // fonts must be drawn after the scene, because they end up on top.
 		
 		guienv->drawAll();
 		
 		driver->endScene();
-
-
-
-		/*core::stringw (L"Movement Example - Irrlicht Engine [");
-		tmp += driver->getName();
-		tmp += L"] fps: ";
-		tmp += fps;
-		device->setWindowCaption(tmp.c_str());
-
-		guienv -> add*/
 	}
 
 	device->drop();
