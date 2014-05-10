@@ -27,6 +27,7 @@ f32 deltaTime = 0;
 video::ITexture* ball = NULL;
 video::ITexture* paddle1 = NULL;
 video::ITexture* paddle2 = NULL;
+video::ITexture* background = NULL;
 
 core::vector2d<f32> ballPosition;
 core::vector2d<f32> target;
@@ -86,18 +87,43 @@ public:
 void updateBallballPosition(f32 deltaTime)
 {
 	ballPosition += (speed * deltaTime) * direction;
-
-	if (ballPosition.X > screenWidth - ball->getSize().Width || ballPosition.X < 0)
-	{
-		direction.X *= -1;
-		soundEngine->play2D("../../../../irrlicht-1.8.1/media/impact.wav");
-	}
 		
+	// ball bouncing off the top and bottom walls
 	if (ballPosition.Y > screenHeight - ball->getSize().Height || ballPosition.Y < 0)
 	{
 		direction.Y *= -1;
 		soundEngine->play2D("../../../../irrlicht-1.8.1/media/impact.wav");
 	}
+
+	// ball passes goal line of player 1
+	if (ballPosition.X < 0)
+	{
+		player2Score++;
+		direction.X = 0;
+		direction.Y = 0;
+		ballPosition.X = 320;
+		ballPosition.Y = 240;
+		soundEngine->play2D("../../../../irrlicht-1.8.1/media/ball.wav");
+	}
+	
+	// ball passes goal line of player 2
+	if (ballPosition.X > screenWidth - ball->getSize().Width)
+	{
+		player1Score++;
+		direction.X = 0;
+		direction.Y = 0;
+		ballPosition.X = 320;
+		ballPosition.Y = 240;
+		soundEngine->play2D("../../../../irrlicht-1.8.1/media/ball.wav");
+	}
+	
+	
+	/*if (ballPosition.X > screenWidth - ball->getSize().Width || ballPosition.X < 0)
+	{
+		direction.X *= -1;
+		soundEngine->play2D("../../../../irrlicht-1.8.1/media/impact.wav");
+	}*/
+
 
 }
 
@@ -123,7 +149,7 @@ int main()
 	MyEventReceiver pongEventReceiver;
 	device->setEventReceiver(&pongEventReceiver);
 
-	gui::IGUIFont *font = guienv->getFont("../../../../irrlicht-1.8.1/media/bigfont.png");
+	gui::IGUIFont *font = guienv->getFont("../../../../irrlicht-1.8.1/media/SF_SquareHead.bmp");
 
 	ball = driver->getTexture("../../../../irrlicht-1.8.1/media/pong_squareBall.png");
 	ballPosition.set(220, 220);
@@ -134,6 +160,9 @@ int main()
 
 	paddle2 = driver->getTexture("../../../../irrlicht-1.8.1/media/pong_squarePaddle.png");
 	paddle2Position.set(610, 240);
+
+	background = driver->getTexture("../../../../irrlicht-1.8.1/media/background.png");
+	
 
 	s32 fps = 0;
 	s32 now = 0;
@@ -175,6 +204,13 @@ int main()
 
 		smgr->drawAll();
 
+		driver->draw2DImage(
+							background, 
+							core::position2d<s32>(0, 0), 
+							core::rect<s32>(0, 0, 640, 480),
+							0, 
+							video::SColor(255, 255, 255, 255),
+							true); 
 		
 		driver->draw2DImage(
 							ball, 
@@ -196,7 +232,7 @@ int main()
 
 
 		font->draw((core::stringc(fps) + " FPS"), core::rect<s32>(10, 10, 0, 0), video::SColor(255, 255, 255, 255)); // fonts must be drawn after the scene, because they end up on top.
-		
+		font->draw(core::stringc(player1Score), core::rect<s32>(300, 220, 0, 0), video::SColor(255, 255, 0, 0));
 		guienv->drawAll();
 		
 		driver->endScene();
