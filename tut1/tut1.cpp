@@ -5,7 +5,7 @@
 using namespace std;
 using namespace irr;
 
-
+  
 #ifdef _IRR_WINDOWS_
 #pragma comment(lib, "Irrlicht.lib")
 #pragma comment(lib, "IrrKlang.lib")
@@ -17,7 +17,6 @@ video::IVideoDriver* driver = NULL;
 scene::ISceneManager* smgr = NULL;
 gui::IGUIEnvironment* guienv = NULL;
 irrklang::ISoundEngine* soundEngine = NULL;
-
 
 
 f32 deltaTime = 0;
@@ -89,13 +88,15 @@ void updateBallballPosition(f32 deltaTime)
 	ballPosition += (speed * deltaTime) * direction;
 		
 	// ball bouncing off the top and bottom walls
-	if (ballPosition.Y > screenHeight - ball->getSize().Height || ballPosition.Y < 0)
+	if (ballPosition.Y > screenHeight - ball->getSize().Height || ballPosition.Y < 0 )
 	{
 		direction.Y *= -1;
 		soundEngine->play2D("../../../../irrlicht-1.8.1/media/impact.wav");
+		//soundEngine->play2D("../../../../irrlicht-1.8.1/media/ball.wav");
 	}
 
 	// ball passes goal line of player 1
+
 	if (ballPosition.X < 0)
 	{
 		player2Score++;
@@ -103,7 +104,7 @@ void updateBallballPosition(f32 deltaTime)
 		direction.Y = 0;
 		ballPosition.X = 320;
 		ballPosition.Y = 240;
-		soundEngine->play2D("../../../../irrlicht-1.8.1/media/ball.wav");
+		soundEngine->play2D("../../../../irrlicht-1.8.1/media/gong.mp3");
 	}
 	
 	// ball passes goal line of player 2
@@ -112,19 +113,33 @@ void updateBallballPosition(f32 deltaTime)
 		player1Score++;
 		direction.X = 0;
 		direction.Y = 0;
-		ballPosition.X = 320;
+		ballPosition.X = 305;
 		ballPosition.Y = 240;
+		soundEngine->play2D("../../../../irrlicht-1.8.1/media/gong.mp3");
+	}
+
+	// ball hits either paddle
+	if (
+		(ballPosition.Y < (paddle1Position.Y + 60) && ballPosition.Y > (paddle1Position.Y - 30) && ballPosition.X < 20 && ballPosition.X > 10) ||
+		(ballPosition.Y < (paddle2Position.Y + 60) && ballPosition.Y > (paddle2Position.Y - 30) && ballPosition.X > (screenWidth - 60) && ballPosition.X < screenWidth)
+		)
+	{
+		direction.X *= -1;
+		speed += speed*.05f;
 		soundEngine->play2D("../../../../irrlicht-1.8.1/media/ball.wav");
 	}
-	
-	
+
+	//if (ballPosition.Y < (paddle2Position.Y + 60) && ballPosition.Y > (paddle2Position.Y - 30) /*&& ballPosition.X > 620 && ballPosition.X < 670*/)
+	//{
+	//	direction.X *= -1;
+	//	soundEngine->play2D("../../../../irrlicht-1.8.1/media/ball.wav");
+	//}
+
 	/*if (ballPosition.X > screenWidth - ball->getSize().Width || ballPosition.X < 0)
 	{
 		direction.X *= -1;
 		soundEngine->play2D("../../../../irrlicht-1.8.1/media/impact.wav");
 	}*/
-
-
 }
 
 
@@ -144,7 +159,7 @@ int main()
 	smgr = device->getSceneManager();
 	guienv = device->getGUIEnvironment();
 
-	device->setWindowCaption(L"Pong");
+	device->setWindowCaption(L"IEEE GDC Pong");
 
 	MyEventReceiver pongEventReceiver;
 	device->setEventReceiver(&pongEventReceiver);
@@ -161,8 +176,10 @@ int main()
 	paddle2 = driver->getTexture("../../../../irrlicht-1.8.1/media/pong_squarePaddle.png");
 	paddle2Position.set(610, 240);
 
-	background = driver->getTexture("../../../../irrlicht-1.8.1/media/background.png");
+	//background = driver->getTexture("../../../../irrlicht-1.8.1/media/background.png");
 	
+
+
 
 	s32 fps = 0;
 	s32 now = 0;
@@ -179,19 +196,19 @@ int main()
 		updateBallballPosition(deltaTime);
 
 
-		if (pongEventReceiver.IsKeyDown(KEY_KEY_W))
+		if (pongEventReceiver.IsKeyDown(KEY_KEY_D) && paddle1Position.Y <= 420)
 		{
 			paddle1Position.Y += (paddle1Speed * deltaTime);
 		}
-		else if (pongEventReceiver.IsKeyDown(KEY_KEY_D))
+		else if (pongEventReceiver.IsKeyDown(KEY_KEY_W) && paddle1Position.Y >= 0)
 		{
 			paddle1Position.Y -= (paddle1Speed * deltaTime);
 		}
-		if (pongEventReceiver.IsKeyDown(KEY_KEY_O))
+		if (pongEventReceiver.IsKeyDown(KEY_KEY_K) && paddle2Position.Y <= 420)
 		{
 			paddle2Position.Y += (paddle2Speed * deltaTime);
 		}
-		else if (pongEventReceiver.IsKeyDown(KEY_KEY_K))
+		else if (pongEventReceiver.IsKeyDown(KEY_KEY_O) && paddle2Position.Y >= 0)
 		{
 			paddle2Position.Y -= (paddle2Speed * deltaTime);
 		}
@@ -200,23 +217,19 @@ int main()
 			device->closeDevice();
 		}
 		
-		driver->beginScene(true, true, video::SColor(255, 100, 101, 140));
+		driver->beginScene(true, true, video::SColor(255, 100, 100, 100));
 
 		smgr->drawAll();
 
-		driver->draw2DImage(
+		/*driver->draw2DImage(
 							background, 
 							core::position2d<s32>(0, 0), 
 							core::rect<s32>(0, 0, 640, 480),
 							0, 
 							video::SColor(255, 255, 255, 255),
-							true); 
+							true);*/ 
 		
-		driver->draw2DImage(
-							ball, 
-							core::position2d<s32>((s32)ballPosition.X, (s32)ballPosition.Y),
-							core::rect<s32>(0, 0, 32, 32), 0, video::SColor(255, 255, 255, 255),
-							true);
+		
 
 		driver->draw2DImage(
 			paddle1,
@@ -230,11 +243,20 @@ int main()
 			core::rect<s32>(0, 0, 15, 64), 0, video::SColor(255, 255, 255, 255),
 			true);
 
+		driver->draw2DLine(core::vector2d<s32>(320, 0), core::vector2d<s32>(320, 480), video::SColor(255,255,255,255));
 
-		font->draw((core::stringc(fps) + " FPS"), core::rect<s32>(10, 10, 0, 0), video::SColor(255, 255, 255, 255)); // fonts must be drawn after the scene, because they end up on top.
-		font->draw(core::stringc(player1Score), core::rect<s32>(300, 220, 0, 0), video::SColor(255, 255, 0, 0));
+		driver->draw2DImage(
+			ball,
+			core::position2d<s32>((s32)ballPosition.X, (s32)ballPosition.Y),
+			core::rect<s32>(0, 0, 32, 32), 0, video::SColor(255, 255, 255, 255),
+			true);
+
+		//font->draw((core::stringc(fps) + " FPS"), core::rect<s32>(10, 10, 0, 0), video::SColor(255, 255, 255, 255)); // fonts must be drawn after the scene, because they end up on top.
+		font->draw(core::stringc(player1Score), core::rect<s32>(200, 220, 0, 0), video::SColor(255, 255, 255, 255));
+		font->draw(core::stringc(player2Score), core::rect<s32>(400, 220, 0, 0), video::SColor(255, 255, 255, 255));
 		guienv->drawAll();
 		
+
 		driver->endScene();
 	}
 
